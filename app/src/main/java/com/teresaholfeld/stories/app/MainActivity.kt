@@ -1,7 +1,7 @@
 package com.teresaholfeld.stories.app
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), StoriesProgressView.StoriesListener {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_main)
-
+        storiesProgressView = findViewById(R.id.stories)
         storiesProgressView?.setStoriesCount(PROGRESS_COUNT)
         storiesProgressView?.setStoryDuration(3000L)
         // or
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), StoriesProgressView.StoriesListener {
 
         storiesProgressView?.setStoriesListener(this)
 
-        counter = 2
+        counter = 0
         storiesProgressView?.startStories(counter)
 
         image = findViewById<View>(R.id.image) as ImageView
@@ -82,12 +82,23 @@ class MainActivity : AppCompatActivity(), StoriesProgressView.StoriesListener {
         image?.setImageResource(resources[--counter])
     }
 
-    override fun onComplete() {}
+    override fun onComplete() {
+        resetStories()
+    }
 
     override fun onDestroy() {
         // Very important !
         storiesProgressView?.destroy()
         super.onDestroy()
+    }
+
+    fun resetStories() {
+        storiesProgressView?.clear()
+        storiesProgressView?.setStoriesCount(PROGRESS_COUNT)
+        storiesProgressView?.setStoriesListener(this)
+        storiesProgressView?.setStoryDuration(3000L)
+        counter = 0
+        storiesProgressView?.startStories(counter)
     }
 
     companion object {
