@@ -2,6 +2,7 @@ package com.teresaholfeld.stories
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -33,14 +34,16 @@ internal class PausableProgressBar constructor(context: Context,
     constructor(context: Context,
                 progressColor: Int,
                 progressBackgroundColor: Int)
-        : this(context, null, progressColor, progressBackgroundColor)
+            : this(context, null, progressColor, progressBackgroundColor)
 
     init {
         LayoutInflater.from(context).inflate(R.layout.pausable_progress, this)
         frontProgressView = findViewById(R.id.front_progress)
         backProgressView = findViewById(R.id.back_progress)
-        backProgressView?.setBackgroundColor(progressBackgroundColor)
-        frontProgressView?.setBackgroundColor(progressColor)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            backProgressView?.background?.setTint(progressBackgroundColor)
+            frontProgressView?.background?.setTint(progressColor)
+        }
     }
 
     fun setDuration(duration: Long) {
@@ -82,7 +85,7 @@ internal class PausableProgressBar constructor(context: Context,
 
     fun startProgress() {
         animation = PausableScaleAnimation(0f, 1f, 1f, 1f, Animation.ABSOLUTE, 0f,
-            Animation.RELATIVE_TO_SELF, 0f)
+                Animation.RELATIVE_TO_SELF, 0f)
         animation?.duration = duration
         animation?.interpolator = LinearInterpolator()
         animation?.setAnimationListener(object : Animation.AnimationListener {

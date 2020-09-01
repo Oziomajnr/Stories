@@ -13,8 +13,8 @@ import java.util.ArrayList
 
 class StoriesProgressView : LinearLayout {
 
-    private val progressBarLayoutParam = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-    private val spaceLayoutParam = LinearLayout.LayoutParams(5, LinearLayout.LayoutParams.WRAP_CONTENT)
+    private val progressBarLayoutParam = LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f)
+    private lateinit var spaceLayoutParam: LayoutParams
     private val defaultColor = ContextCompat.getColor(context, R.color.progress_primary)
     private val defaultBackgroundColor = ContextCompat.getColor(context, R.color.progress_secondary)
 
@@ -59,12 +59,15 @@ class StoriesProgressView : LinearLayout {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        orientation = LinearLayout.HORIZONTAL
+        orientation = HORIZONTAL
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.StoriesProgressView)
         storiesCount = typedArray.getInt(R.styleable.StoriesProgressView_progressCount, 0)
         progressColor = typedArray.getColor(R.styleable.StoriesProgressView_progressColor, defaultColor)
         progressBackgroundColor = typedArray.getColor(R.styleable.StoriesProgressView_progressBackgroundColor,
                 defaultBackgroundColor)
+        val progressSpacing = typedArray.getDimensionPixelSize(R.styleable.StoriesProgressView_progressSpacing,
+                5)
+        spaceLayoutParam = LayoutParams(progressSpacing, LayoutParams.WRAP_CONTENT)
         typedArray.recycle()
         bindViews()
     }
@@ -85,6 +88,9 @@ class StoriesProgressView : LinearLayout {
     private fun createProgressBar(): PausableProgressBar {
         val p = PausableProgressBar(context, progressColor, progressBackgroundColor)
         p.layoutParams = progressBarLayoutParam
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            p.clipToOutline = true
+        }
         return p
     }
 
